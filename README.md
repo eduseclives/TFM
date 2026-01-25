@@ -1,4 +1,5 @@
-# ![titulo_banner](https://github.com/user-attachments/assets/885c49d5-7393-4f47-bbf6-72cd2d645ea4)
+# ![titulo_banner](https://github.com/user-attachments/assets/c581e0d2-e506-41bd-be09-661a16d3d3ed)
+
 
 Proyecto Final de Maestría en Máster Universitario en Ingeniería de Software y Sistemas Informáticos <br />
 Autores: Henry Andres Albarracin Rodriguez, Robert Adolfo Santana Rodriguez <br /><br />
