@@ -2,8 +2,9 @@
 
 
          Proyecto Final de Maestría en Máster Universitario en Ingeniería de Software y Sistemas Informáticos
-         Universidad Internacional de La Rioja
-         Escuela Superior de Ingeniería y Tecnología
+         
+                                    Universidad Internacional de La Rioja
+                                 Escuela Superior de Ingeniería y Tecnología
 
                   Autores: Henry Andres Albarracin Rodriguez, Robert Adolfo Santana Rodriguez
                   Director: Juan Ramon Bermejo Higuera
