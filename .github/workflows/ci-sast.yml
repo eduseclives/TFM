@@ -9,7 +9,7 @@ on:
 jobs:
   build-and-scan:
     name: Compilación, Escaneo y DefectDojo
-    # Cambiado a self-hosted para alcanzar el localhost del DefectDojo
+    # se usa self-hosted para alcanzar el localhost del DefectDojo
     runs-on: self-hosted
     
     strategy:
@@ -78,11 +78,31 @@ jobs:
     steps:
     - name: Checkout del código
       uses: actions/checkout@v4
+    - name: Configurar JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: 'gradle'  
     - name: Inicializar CodeQL
       uses: github/codeql-action/init@v3
       with:
         languages: 'java-kotlin'
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v3
+    # las siguientes 2 lineas se usan para cuando se tienen repos por separado
+    #- name: Autobuild
+    #  uses: github/codeql-action/autobuild@v3
+    # las siguientes lineas se usan para cuando se tiene un solo repo
+    - name: Compilación Manual para CodeQL
+      run: |
+        # Lista de tus servicios
+        services=("user-service" "auth-service" "gateway-service" "registry-service" "product-service" "order-service")
+        
+        for service in "${services[@]}"; do
+          echo "Compilando $service para análisis..."
+          cd $service
+          chmod +x gradlew
+          ./gradlew build -x test
+          cd ..
+        done
     - name: Realizar Análisis de CodeQL
       uses: github/codeql-action/analyze@v3
