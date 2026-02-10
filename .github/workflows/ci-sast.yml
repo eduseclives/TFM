@@ -29,9 +29,10 @@ jobs:
         cache: 'gradle'
 
     - name: Compilar con Gradle
-      shell: pwsh
+      #shell: pwsh
       run: |
         cd ${{ matrix.service }}
+        chmod +x gradlew
         ./gradlew build -x test
 
     - name: OWASP Dependency Check
@@ -46,7 +47,7 @@ jobs:
       continue-on-error: true
 
     - name: Subir a DefectDojo (Dependency Check)
-      shell: pwsh
+      #shell: pwsh
       env:
         DOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}
         DOJO_URL: ${{ secrets.DEFECTDOJO_URL }}
@@ -66,8 +67,6 @@ jobs:
           Write-Host "No se encontró el reporte en $reportPath"
         }
 
-  # CodeQL requiere configuración específica en self-hosted Windows
-  # Se recomienda activarlo una vez el runner esté validado
   analyze:
     name: Análisis SAST (CodeQL)
     runs-on: self-hosted
@@ -99,10 +98,14 @@ jobs:
         
         for service in "${services[@]}"; do
           echo "Compilando $service para análisis..."
-          cd $service
-          chmod +x gradlew
-          ./gradlew build -x test
-          cd ..
+          if [ -f "$service/gradlew" ]; then
+            cd $service
+            chmod +x gradlew
+            ./gradlew build -x test
+            cd ..
+          else
+            echo "No se encontró gradlew en el servicio $service"
+          fi
         done
     - name: Realizar Análisis de CodeQL
       uses: github/codeql-action/analyze@v3
