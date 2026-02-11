@@ -11,6 +11,7 @@ jobs:
     name: Compilación, Escaneo y DefectDojo
     # se usa self-hosted para alcanzar el localhost del DefectDojo
     runs-on: self-hosted
+    timeout-minutes: 60
     
     strategy:
       matrix:
@@ -52,24 +53,24 @@ jobs:
         DOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}
         DOJO_URL: ${{ secrets.DEFECTDOJO_URL }}
       run: |
-        # Nota: Ajusta el product_id según corresponda en tu DefectDojo
-        $reportPath = "reports/${{ matrix.service }}/dependency-check-report.xml"
-        if (Test-Path $reportPath) {
-          curl.exe -X POST "$($env:DOJO_URL)/api/v2/import-scan/" `
-          -H "Authorization: Token $($env:DOJO_TOKEN)" `
-          -F "active=true" `
-          -F "verified=true" `
-          -F "scan_type=Dependency Check Scan" `
-          -F "product_name=${{ matrix.service }}" `
-          -F "engagement_name=CI/CD Scan $(Get-Date -Format 'yyyy-MM-dd')" `
-          -F "file=@$reportPath"
-        } else {
-          Write-Host "No se encontró el reporte en $reportPath"
-        }
+        REPORT_PATH="reports/${{ matrix.service }}/dependency-check-report.xml"
+        if [ -f "$REPORT_PATH" ]; then
+          curl -X POST "${DOJO_URL}/api/v2/import-scan/" \
+          -H "Authorization: Token ${DOJO_TOKEN}" \
+          -F "active=true" \
+          -F "verified=true" \
+          -F "scan_type=Dependency Check Scan" \
+          -F "product_name=${{ matrix.service }}" \
+          -F "engagement_name=CI/CD Scan $(date +'%Y-%m-%d')" \
+          -F "file=@$REPORT_PATH"
+        else
+          echo "No se encontró el reporte en $REPORT_PATH"
+        fi
 
   analyze:
     name: Análisis SAST (CodeQL)
     runs-on: self-hosted
+    timeout-minutes: 60
     permissions:
       actions: read
       contents: read
@@ -84,7 +85,7 @@ jobs:
         distribution: 'temurin'
         cache: 'gradle'  
     - name: Inicializar CodeQL
-      uses: github/codeql-action/init@v3
+      uses: github/codeql-action/init@v4
       with:
         languages: 'java-kotlin'
     # las siguientes 2 lineas se usan para cuando se tienen repos por separado
@@ -108,4 +109,28 @@ jobs:
           fi
         done
     - name: Realizar Análisis de CodeQL
-      uses: github/codeql-action/analyze@v3
+      uses: github/codeql-action/analyze@v4
+      with:
+        category: "/language:java-kotlin"
+
+    - name: Subir a DefectDojo (CodeQL SARIF)
+      if: always()
+      env:
+        DOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}
+        DOJO_URL: ${{ secrets.DEFECTDOJO_URL }}
+      run: |
+        # Buscar el archivo SARIF generado por CodeQL en el directorio temporal del runner
+        SARIF_FILE=$(find "${{ runner.temp }}" -name "*.sarif" | head -n 1)
+        if [ -n "$SARIF_FILE" ]; then
+          echo "Subiendo $SARIF_FILE a DefectDojo..."
+          curl -X POST "${DOJO_URL}/api/v2/import-scan/" \
+          -H "Authorization: Token ${DOJO_TOKEN}" \
+          -F "active=true" \
+          -F "verified=true" \
+          -F "scan_type=SARIF" \
+          -F "product_name=Monorepo-SAST" \
+          -F "engagement_name=CodeQL Scan $(date +'%Y-%m-%d')" \
+          -F "file=@$SARIF_FILE"
+        else
+          echo "No se encontró ningún archivo SARIF para subir."
+        fi
