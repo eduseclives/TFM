@@ -8,7 +8,7 @@ import com.nimbusds.jose.proc.SecurityContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.oauth2.jwt.JwtEncoder
-import org.springframework.security.oauth2.jwt.NimbuJwtEncoder
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
@@ -37,7 +37,7 @@ class KeyConfiguration {
     // We'll trust auto-configuration for SAS, but if we need to mint manually in Controller:
     @Bean
     fun jwtEncoder(jwkSource: JWKSource<SecurityContext>): JwtEncoder {
-        return NimbuJwtEncoder(jwkSource)
+        return NimbusJwtEncoder(jwkSource)
     }
 
     private fun generateRsaKey(): KeyPair {

@@ -69,6 +69,44 @@ jobs:
           echo "No se encontró el reporte en $REPORT_PATH"
         fi
 
+    - name: Construir Imagen Docker
+      run: |
+        cd ${{ matrix.service }}
+        docker build -t ${{ matrix.service }}:latest .
+
+    - name: Escaneo de Imagen con Trivy
+      run: |
+        # Usamos la imagen oficial de Trivy para evitar instalación manual en el runner
+        docker run --rm \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          -v ${{ github.workspace }}/reports/${{ matrix.service }}:/root/.cache/ \
+          aquasec/trivy:latest image \
+          --format json \
+          --output /root/.cache/trivy-results.json \
+          ${{ matrix.service }}:latest
+
+    - name: Subir a DefectDojo (Trivy Scan)
+      if: always()
+      env:
+        DOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}
+        DOJO_URL: ${{ secrets.DEFECTDOJO_URL }}
+      run: |
+        REPORT_PATH="reports/${{ matrix.service }}/trivy-results.json"
+        if [ -f "$REPORT_PATH" ]; then
+          curl -X POST "${DOJO_URL%/}/api/v2/import-scan/" \
+          -H "Authorization: Token ${{ secrets.DEFECTDOJO_TOKEN }}" \
+          -H "Accept: application/json" \
+          -k \
+          -F "active=true" \
+          -F "verified=true" \
+          -F "scan_type=Trivy Scan" \
+          -F "product_name=${{ matrix.service }}" \
+          -F "engagement_name=CI/CD Scan $(date +'%Y-%m-%d')" \
+          -F "file=@$REPORT_PATH"
+        else
+          echo "No se encontró el reporte de Trivy en $REPORT_PATH"
+        fi
+
   analyze:
     name: Análisis SAST (CodeQL)
     runs-on: self-hosted

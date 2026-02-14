@@ -14,6 +14,10 @@ java {
 	}
 }
 
+tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+	archiveFileName.set("order-service.jar")
+}
+
 repositories {
 	mavenCentral()
 }

@@ -16,6 +16,10 @@ java {
 	}
 }
 
+tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+	archiveFileName.set("gateway-service.jar")
+}
+
 repositories {
 	mavenCentral()
 }

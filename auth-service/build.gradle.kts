@@ -10,6 +10,7 @@ group = "com.example"
 version = "0.0.1-SNAPSHOT"
 description = "Demo project for Spring Boot"
 
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
@@ -38,6 +39,15 @@ kotlin {
 		freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
 	}
 }
+
+tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+	archiveFileName.set("auth-service.jar")
+}
+
+tasks.named<Jar>("jar") {
+	enabled = false
+}
+
 
 tasks.withType<Test> {
 	useJUnitPlatform()
