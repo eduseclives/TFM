@@ -12,5 +12,50 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - mysql_data:/var/lib/mysql
 
+  registry-server:
+    build: ./registry-service
+    ports:
+      - "8761:8761"
+
+  gateway-service:
+    build: ./gateway-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - registry-server
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - registry-server
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - registry-server
+
+  product-service:
+    build: ./product-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - registry-server
+
+  order-service:
+    build: ./order-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - registry-server
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+
 volumes:
   mysql_data:
