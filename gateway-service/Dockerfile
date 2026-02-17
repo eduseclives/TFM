@@ -7,7 +7,7 @@ COPY build.gradle.kts .
 COPY settings.gradle.kts .
 RUN ./gradlew dependencies
 COPY src src
-RUN ./gradlew build -x test
+RUN gradle build -x test --stacktrace --info
 
 # Run stage
 FROM eclipse-temurin:21-jre-alpine

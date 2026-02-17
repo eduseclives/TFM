@@ -1,39 +1,79 @@
 package com.example.auth_service
 
-import org.springframework.security.oauth2.jwt.JwtClaimsSet
-import org.springframework.security.oauth2.jwt.JwtEncoder
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import java.time.Instant
 
-// Simple login request DTO
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
+import jakarta.persistence.*
+import org.slf4j.LoggerFactory
+import jakarta.annotation.PostConstruct
+
+@Entity
+@Table(name = "users")
+data class User(
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long? = null,
+    val username: String,
+    val password: String,
+    val role: String = "USER"
+)
+
+@Repository
+interface UserRepository : JpaRepository<User, Long> {
+    fun findByUsername(username: String): User?
+}
+
 data class LoginRequest(val username: String, val password: String)
 
 @RestController
-class AuthController(private val jwtEncoder: JwtEncoder) {
+class AuthController(private val userRepository: UserRepository) {
+    private val logger = LoggerFactory.getLogger(AuthController::class.java)
+
+    @PostConstruct
+    fun init() {
+        logger.info("AUTH CONTROLLER LOADED SUCCESSFULLY")
+    }
+
+    @GetMapping("/test-db")
+    fun testDb(): ResponseEntity<Any> {
+        return try {
+            val count = userRepository.count()
+            ResponseEntity.ok(mapOf("status" to "DB Connection OK", "userCount" to count))
+        } catch (e: Exception) {
+            logger.error("DB Error: ", e)
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapOf("error" to e.message))
+        }
+    }
 
     @PostMapping("/login")
-    fun login(@RequestBody request: LoginRequest): Map<String, String> {
-        // In a real app, authenticate via AuthenticationManager
-        // authenticationManager.authenticate(UsernamePasswordAuthenticationToken(request.username, request.password))
-        
-        // For demo, accept any non-empty credential
-        if (request.username.isBlank() || request.password.isBlank()) {
-               throw IllegalArgumentException("Invalid credentials")
+    fun login(@RequestBody request: LoginRequest): ResponseEntity<Any> {
+        logger.info("Login attempt for user: {}", request.username)
+        return try {
+            val user = userRepository.findByUsername(request.username)
+            logger.info("User found: {}", user != null)
+            
+            if (user != null && user.password == request.password) {
+                ResponseEntity.ok(mapOf(
+                    "token" to "dummy-token-for-${user.username}",
+                    "username" to user.username,
+                    "role" to user.role
+                ))
+            } else {
+                ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(mapOf("error" to "Invalid credentials"))
+            }
+        } catch (e: Exception) {
+            logger.error("Error during login for {}: ", request.username, e)
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapOf("error" to e.message))
         }
+    }
 
-        val now = Instant.now()
-        val claims = JwtClaimsSet.builder()
-            .issuer("http://localhost:8081")
-            .issuedAt(now)
-            .expiresAt(now.plusSeconds(3600))
-            .subject(request.username)
-            .claim("roles", listOf("USER"))
-            .build()
-
-        val token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).tokenValue
-        return mapOf("token" to token)
+    @GetMapping("/oauth2/jwks")
+    fun jwks(): Map<String, Any> {
+        return mapOf("keys" to listOf<String>())
     }
 }

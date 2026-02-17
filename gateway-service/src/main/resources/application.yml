@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8091
 
 spring:
   application:
@@ -8,11 +8,18 @@ spring:
     gateway:
       routes:
         - id: auth-route
-          uri: http://localhost:8081
+          uri: lb://auth-service
           predicates:
             - Path=/auth/**
+          filters:
+            - StripPrefix=1
   security:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:8081/oauth2/jwks
+          jwk-set-uri: http://auth-service:8081/oauth2/jwks
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://registry-server:8761/eureka/

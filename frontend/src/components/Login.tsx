@@ -7,7 +7,7 @@ import styles from './Login.module.css';
 // Configure Axios base URL (Gateway)
 // In development, Vite proxy will handle /api calls if configured,
 // but for now we point directly to localhost:8080 or use relative path if proxy is set.
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8091';
 
 export default function Login() {
     const [username, setUsername] = useState('');

@@ -1,4 +1,4 @@
-name: "CI/CD con Seguridad SAST y DefectDojo"
+name: "CI/CD con Seguridad SAST, SCA, DAST y DefectDojo"
 
 on:
   push:
@@ -6,12 +6,43 @@ on:
   pull_request:
     branches: [ "main" ]
 
+# Estrategia de activación manual
+  workflow_dispatch:
+    inputs:
+      run_sca:
+        description: 'Ejecutar SCA (Dependency Check)'
+        required: true
+        type: boolean
+        default: true
+      run_sast:
+        description: 'Ejecutar SAST (CodeQL)'
+        required: true
+        type: boolean
+        default: true
+      run_trivy:
+        description: 'Ejecutar Escaneo de Contenedores (Trivy)'
+        required: true
+        type: boolean
+        default: false  
+      run_dast:
+        description: 'Ejecutar DAST (OWASP ZAP)'
+        required: true
+        type: boolean
+        default: false
+
 jobs:
+
   build-and-scan:
     name: Compilación, Escaneo y DefectDojo
     # se usa self-hosted para alcanzar el localhost del DefectDojo
     runs-on: self-hosted
     timeout-minutes: 60
+
+    # Se ejecuta si es un evento automático O si el input manual es true
+    if: |
+      github.event_name != 'workflow_dispatch' || 
+      github.event.inputs.run_sca == 'true' || 
+      github.event.inputs.run_trivy == 'true'
     
     strategy:
       matrix:
@@ -36,7 +67,9 @@ jobs:
         chmod +x gradlew
         ./gradlew build -x test
 
+    # --- ANÁLISIS SCA ---
     - name: OWASP Dependency Check
+      if: github.event_name != 'workflow_dispatch' || github.event.inputs.run_sca == 'true'
       uses: dependency-check/DependencyCheck-Action@main
       with:
         project: ${{ matrix.service }}
@@ -47,8 +80,10 @@ jobs:
           --failOnCVSS 7
       continue-on-error: true
 
+    # --- IMPORTAR A DEFECTDOJO (SCA) ---
     - name: Subir a DefectDojo (Dependency Check)
       #shell: pwsh
+      if: always() && (github.event_name != 'workflow_dispatch' || github.event.inputs.run_sca == 'true')
       env:
         DOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}
         DOJO_URL: ${{ secrets.DEFECTDOJO_URL }}
@@ -74,7 +109,9 @@ jobs:
         cd ${{ matrix.service }}
         docker build -t ${{ matrix.service }}:latest .
 
+    # --- ESCANEO DE CONTENEDORES (TRIVY) ---
     - name: Escaneo de Imagen con Trivy
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_trivy == 'true'
       run: |
         # Usamos la imagen oficial de Trivy para evitar instalación manual en el runner
         docker run --rm \
@@ -85,8 +122,9 @@ jobs:
           --output /root/.cache/trivy-results.json \
           ${{ matrix.service }}:latest
 
+    # --- IMPORTAR A DEFECTDOJO (TRIVY) ---
     - name: Subir a DefectDojo (Trivy Scan)
-      if: always()
+      if: always() && github.event_name == 'workflow_dispatch' && github.event.inputs.run_trivy == 'true'
       env:
         DOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}
         DOJO_URL: ${{ secrets.DEFECTDOJO_URL }}
@@ -107,9 +145,11 @@ jobs:
           echo "No se encontró el reporte de Trivy en $REPORT_PATH"
         fi
 
+  # --- ANÁLISIS SAST (CODEQL) ---
   analyze:
     name: Análisis SAST (CodeQL)
     runs-on: self-hosted
+    if: github.event_name != 'workflow_dispatch' || github.event.inputs.run_sast == 'true'
     timeout-minutes: 60
     permissions:
       actions: read
@@ -153,8 +193,9 @@ jobs:
       with:
         category: "/language:java-kotlin"
 
+      # --- IMPORTAR A DEFECTDOJO (CODEQL) ---
     - name: Subir a DefectDojo (CodeQL SARIF)
-      if: always()
+      if: always() && (github.event_name != 'workflow_dispatch' || github.event.inputs.run_sast == 'true')
       env:
         DOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}
         DOJO_URL: ${{ secrets.DEFECTDOJO_URL }}
@@ -176,3 +217,28 @@ jobs:
         else
           echo "No se encontró ningún archivo SARIF para subir."
         fi
+
+  analyze-dast:
+    name: Análisis DAST (OWASP ZAP)
+    runs-on: self-hosted
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_dast == 'true'
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          target: 'https://localhost:3000' # Cambiar por el endpoint de tu microservicio
+          rules_file_name: '.zap/rules.tsv'
+          fail_action: false
+
+      - name: Subir DAST a DefectDojo
+        if: always()
+        run: |
+          # Importación específica para ZAP en DefectDojo
+          curl -X POST "${{ secrets.DOJO_URL }}/api/v2/import-scan/" \
+          -H "Authorization: Token ${{ secrets.DEFECTDOJO_TOKEN }}" \
+          -F "active=true" \
+          -F "verified=true" \
+          -F "scan_type=ZAP Scan" \
+          -F "product_name=Distributed-App-DAST" \
+          -F "file=@zap_out.xml"
