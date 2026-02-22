@@ -1,10 +1,12 @@
 import { useState } from 'react';
+
 import { motion } from 'framer-motion';
-import { User, Lock, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import { User as UserIcon, Lock, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import styles from './Login.module.css';
 import logo from '../img/logo.jpg';
 import logosf from '../img/logosf.png';
+import { authUtils } from '../utils/auth';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8091';
 
@@ -28,13 +30,15 @@ export default function Login() {
             const token = response.data.token || response.data.access_token;
 
             if (token) {
-                localStorage.setItem('jwt_token', token);
-                alert(`Bienvenido, ${username}! Token recibido.`);
+                console.log('Login: Success, saving session and redirecting...');
+                authUtils.saveSession(token, username);
+                window.location.href = '/dashboard'; // Use href for a clean state reload
             } else {
                 throw new Error('No se recibio token');
             }
         } catch (err: any) {
-            console.error(err);
+            console.error('Login Error:', err);
+            alert('Error en login: ' + (err.response?.data?.error || err.message));
             setError('Credenciales invalidas o error en el servidor. Verifique e intente nuevamente.');
         } finally {
             setIsLoading(false);
@@ -101,7 +105,7 @@ export default function Login() {
                     <form onSubmit={handleLogin}>
                         <div className={styles.formGroup}>
                             <div className={styles.inputWrapper}>
-                                <User className={styles.icon} size={20} />
+                                <UserIcon className={styles.icon} size={20} />
                                 <input
                                     type="text"
                                     className={styles.input}
