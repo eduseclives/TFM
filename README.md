@@ -10,7 +10,8 @@
                   Director: Juan Ramon Bermejo Higuera
 
 <br />
-##__Protocolo de Revisión e Inspección de Seguridad en Micro-Arquitecturas__
+
+__Protocolo de Revisión e Inspección de Seguridad en Micro-Arquitecturas__
 <br />
 Metodología de análisis de seguridad para microservicios basada en ecosistemas Spring, orientada a mitigar riesgos de seguridad, promoviendo una arquitectura escalable y resiliente para entornos de alta demanda.
 <br /> <br />
@@ -31,6 +32,7 @@ __Trabajos relativos__
 <br />
 ___________________________________________________________________________________________________________
 <br />
+
 __Escerario de evaluación__
 <br />
 La estructura del escenario es: <br />
@@ -43,6 +45,7 @@ La estructura del escenario es: <br />
 ├── product-service<br />
 ├── order-service<br />
 └── frontend<br />
+<br />
 
 __Docker-compose__
 <br />
