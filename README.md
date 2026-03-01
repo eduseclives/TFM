@@ -13,7 +13,7 @@
 
 __Protocolo de Revisión e Inspección de Seguridad en Micro-Arquitecturas__
 
-<br /><br />
+<br />
 Metodología de análisis de seguridad para microservicios basada en ecosistemas Spring, orientada a mitigar riesgos de seguridad, promoviendo una arquitectura escalable y resiliente para entornos de alta demanda.
 <br />
 
@@ -32,7 +32,7 @@ __Trabajos relativos__
 6) Sinan, M., Shahin, M., & Gondal, I. (2025). Integrating Security Controls in DevSecOps: Challenges, Solutions, and Future Research Directions. Journal of Software: Evolution and Process, 37(6), e70029. https://doi.org/10.1002/SMR.70029
 <br /><br />
 ___________________________________________________________________________________________________________________________________
-<br /><br />
+<br />
 
 __Escerario de evaluación__
 <br /><br />
@@ -48,7 +48,7 @@ La estructura del escenario es: <br />
 └── frontend<br />
 <br />
 
-__Docker-compose__
+__Construcción con Docker-compose__
 <br /><br />
 Puede ser descargada y construida asi:
 <br />
