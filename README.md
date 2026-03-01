@@ -10,7 +10,9 @@
                   Director: Juan Ramon Bermejo Higuera
 
 <br />
-## Protocolo de Revisión e Inspección de Seguridad en Micro-Arquitecturas
+
+__Protocolo de Revisión e Inspección de Seguridad en Micro-Arquitecturas__
+
 <br />
 Metodología de análisis de seguridad para microservicios basada en ecosistemas Spring, orientada a mitigar riesgos de seguridad, promoviendo una arquitectura escalable y resiliente para entornos de alta demanda.
 <br /> <br />
@@ -32,10 +34,19 @@ __Trabajos relativos__
 
 __Escerario de evaluación__
 
+.
+├── mysql
+├── registry-server
+├── gateway-service
+├── auth-service
+├── user-service
+├── product-service
+├── order-service
+└── frontend
 
 __Docker-compose__
 <br />
-	git clone https://github.com/eduseclives/TFM.git
-	cd TFM
-	docker-compose up --build
+	git clone https://github.com/eduseclives/TFM.git<br />
+	cd TFM<br />
+	docker-compose up --build<br />
 <br />
