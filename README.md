@@ -31,20 +31,22 @@ __Trabajos relativos__
 5) Voggenreiter, M., Angermeir, F., Moyon, F., Schöpp, U., & Bonvin, P. (2024). Automated Security Findings Management: A Case Study in Industrial DevOps. ACM International Conference Proceeding Series, 312–322. https://doi.org/10.1145/3639477.3639744
 6) Sinan, M., Shahin, M., & Gondal, I. (2025). Integrating Security Controls in DevSecOps: Challenges, Solutions, and Future Research Directions. Journal of Software: Evolution and Process, 37(6), e70029. https://doi.org/10.1002/SMR.70029
 <br />
-
+___________________________________________________________________________________________________________
+<br />
 __Escerario de evaluación__
-
+La estructura del escenario es:
 .
-├── mysql
-├── registry-server
-├── gateway-service
-├── auth-service
-├── user-service
-├── product-service
-├── order-service
-└── frontend
+├── mysql<br />
+├── registry-server<br />
+├── gateway-service<br />
+├── auth-service<br />
+├── user-service<br />
+├── product-service<br />
+├── order-service<br />
+└── frontend<br />
 
 __Docker-compose__
+Puede ser descargada y construida asi:
 <br />
 	git clone https://github.com/eduseclives/TFM.git<br />
 	cd TFM<br />
