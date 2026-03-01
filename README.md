@@ -10,9 +10,7 @@
                   Director: Juan Ramon Bermejo Higuera
 
 <br />
-
-__Protocolo de Revisión e Inspección de Seguridad en Micro-Arquitecturas__
-
+##__Protocolo de Revisión e Inspección de Seguridad en Micro-Arquitecturas__
 <br />
 Metodología de análisis de seguridad para microservicios basada en ecosistemas Spring, orientada a mitigar riesgos de seguridad, promoviendo una arquitectura escalable y resiliente para entornos de alta demanda.
 <br /> <br />
@@ -34,8 +32,9 @@ __Trabajos relativos__
 ___________________________________________________________________________________________________________
 <br />
 __Escerario de evaluación__
-La estructura del escenario es:
-.
+<br />
+La estructura del escenario es: <br />
+.<br />
 ├── mysql<br />
 ├── registry-server<br />
 ├── gateway-service<br />
@@ -46,9 +45,12 @@ La estructura del escenario es:
 └── frontend<br />
 
 __Docker-compose__
+<br />
 Puede ser descargada y construida asi:
 <br />
 	git clone https://github.com/eduseclives/TFM.git<br />
 	cd TFM<br />
 	docker-compose up --build<br />
+<br />
+___________________________________________________________________________________________________________
 <br />
