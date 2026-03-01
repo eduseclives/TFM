@@ -52,9 +52,9 @@ __Construcción con Docker-compose__
 <br /><br />
 Puede ser descargada y construida asi:
 <br />
-	git clone https://github.com/eduseclives/TFM.git<br />
-	cd TFM<br />
-	docker-compose up --build<br />
+		git clone https://github.com/eduseclives/TFM.git<br />
+		cd TFM<br />
+		docker-compose up --build<br />
 <br />
 ___________________________________________________________________________________________________________
 <br />
