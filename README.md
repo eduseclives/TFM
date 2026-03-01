@@ -12,9 +12,10 @@
 <br />
 
 __Protocolo de Revisión e Inspección de Seguridad en Micro-Arquitecturas__
-<br />
+
+<br /><br />
 Metodología de análisis de seguridad para microservicios basada en ecosistemas Spring, orientada a mitigar riesgos de seguridad, promoviendo una arquitectura escalable y resiliente para entornos de alta demanda.
-<br /> <br />
+<br />
 
 El trabajo integra el analisis de 6 trabajos formales, referenciados en la seccion de trabajos relativos, junto con las contribuciones que integradas, forman la metodologia protocolizada PRISMA 59.  
 <br /><br />
@@ -29,12 +30,12 @@ __Trabajos relativos__
 4) Informačních Technologií, F., & Zranitelností Kontejnerových Obrazech, D. V. (n.d.). Detekce zranitelností v kontejnerových obrazech. Vysoké učení technické v Brně. Fakulta informačních technologií. Retrieved November 16, 2025, from http://hdl.handle.net/11012/248578
 5) Voggenreiter, M., Angermeir, F., Moyon, F., Schöpp, U., & Bonvin, P. (2024). Automated Security Findings Management: A Case Study in Industrial DevOps. ACM International Conference Proceeding Series, 312–322. https://doi.org/10.1145/3639477.3639744
 6) Sinan, M., Shahin, M., & Gondal, I. (2025). Integrating Security Controls in DevSecOps: Challenges, Solutions, and Future Research Directions. Journal of Software: Evolution and Process, 37(6), e70029. https://doi.org/10.1002/SMR.70029
-<br />
-___________________________________________________________________________________________________________
-<br />
+<br /><br />
+___________________________________________________________________________________________________________________________________
+<br /><br />
 
 __Escerario de evaluación__
-<br />
+<br /><br />
 La estructura del escenario es: <br />
 .<br />
 ├── mysql<br />
@@ -48,7 +49,7 @@ La estructura del escenario es: <br />
 <br />
 
 __Docker-compose__
-<br />
+<br /><br />
 Puede ser descargada y construida asi:
 <br />
 	git clone https://github.com/eduseclives/TFM.git<br />
