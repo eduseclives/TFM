@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
+import AboutPrisma from './components/AboutPrisma';
 import Dashboard from './components/Dashboard/Dashboard';
 import Overview from './components/Dashboard/Overview';
 import Inventory from './components/Dashboard/Inventory';
@@ -45,6 +46,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={!isAuth ? <Login /> : <Navigate to="/dashboard" />} />
+        <Route path="/about" element={<AboutPrisma />} />
 
         <Route
           path="/dashboard"

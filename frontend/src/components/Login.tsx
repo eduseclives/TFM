@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { motion } from 'framer-motion';
 import { User as UserIcon, Lock, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
@@ -71,6 +72,17 @@ export default function Login() {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.4, duration: 0.8 }}
                     />
+                    
+                    <motion.div 
+                        className={styles.aboutLinkContainer}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.6, duration: 0.5 }}
+                    >
+                        <Link to="/about" className={styles.aboutLink}>
+                            Cerca de PRISMA_59
+                        </Link>
+                    </motion.div>
                 </div>
 
                 <div className={styles.formSection}>

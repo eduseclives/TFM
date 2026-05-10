@@ -245,3 +245,27 @@
   align-items: center;
   gap: 0.5rem;
 }
+
+.aboutLinkContainer {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.aboutLink {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.aboutLink:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}

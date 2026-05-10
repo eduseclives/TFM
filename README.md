@@ -17,7 +17,7 @@ __Protocolo de Revisión e Inspección de Seguridad en Micro-Arquitecturas__
 Metodología de análisis de seguridad para microservicios basada en ecosistemas Spring, orientada a mitigar riesgos de seguridad, promoviendo una arquitectura escalable y resiliente para entornos de alta demanda.
 <br />
 
-El trabajo integra el analisis de 6 trabajos formales, referenciados en la seccion de trabajos relativos, junto con las contribuciones que integradas, forman la metodologia protocolizada PRISMA 59.  
+El trabajo integra el analisis de 6 trabajos formales, referenciados en la seccion de trabajos relativos, junto con las contribuciones que integradas, forman la metodologia protocolizada PRISMA_59.  
 <br /><br />
 ![prisma 59 black](https://github.com/user-attachments/assets/7d053afa-b4f0-4df9-86e1-73521adfa59b)
 <br /><br />
